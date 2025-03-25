@@ -27,6 +27,7 @@ import {
 } from "./helpers.js";
 import { testReporter } from "./reporter.js";
 import { run } from "./runner.js";
+import { npmModuleToNpmRootPath } from "../solidity/build-system/root-paths-utils.js";
 
 interface TestActionArguments {
   testFiles: string[];
@@ -37,8 +38,6 @@ const runSolidityTests: NewTaskActionFunction<TestActionArguments> = async (
   { testFiles, chainType },
   hre,
 ) => {
-  let rootFilePaths: string[];
-
   if (chainType !== "l1") {
     console.log(
       chalk.yellow(
@@ -49,14 +48,15 @@ const runSolidityTests: NewTaskActionFunction<TestActionArguments> = async (
     return;
   }
 
+  let localFilesToCompile: string[];
   if (testFiles.length > 0) {
-    rootFilePaths = testFiles.map((f) =>
+    localFilesToCompile = testFiles.map((f) =>
       resolveFromRoot(hre.config.paths.root, f),
     );
   } else {
     // NOTE: A test file is either a file with a `.sol` extension in the `tests.solidity`
     // directory or a file with a `.t.sol` extension in the `sources.solidity` directory
-    rootFilePaths = (
+    localFilesToCompile = (
       await Promise.all([
         getAllFilesMatching(hre.config.paths.tests.solidity, (f) =>
           f.endsWith(".sol"),
@@ -69,7 +69,13 @@ const runSolidityTests: NewTaskActionFunction<TestActionArguments> = async (
   }
   // NOTE: We remove duplicates in case there is an intersection between
   // the tests.solidity paths and the sources paths
-  rootFilePaths = Array.from(new Set(rootFilePaths));
+  localFilesToCompile = Array.from(new Set(localFilesToCompile));
+
+  const dependenciesToCompile = hre.config.solidity.dependenciesToCompile.map(
+    npmModuleToNpmRootPath,
+  );
+
+  const rootFilePaths = [...localFilesToCompile, ...dependenciesToCompile];
 
   const buildOptions: BuildOptions = {
     force: false,
