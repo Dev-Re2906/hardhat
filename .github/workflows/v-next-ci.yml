@@ -3,8 +3,6 @@ name: vNext CI
 on:
   merge_group:
   push:
-    branches:
-      - v-next
   pull_request:
   workflow_dispatch:
 
@@ -292,7 +290,7 @@ jobs:
           OS: ${{ matrix.os }}
           NODE: ${{ matrix.node }}
       - name: Upload test results
-        if: ${{ !cancelled() && github.event_name != 'merge_group' &&hashFiles(format('v-next/{0}/reports/junit.xml', matrix.package)) != '' }}
+        if: ${{ !cancelled() && github.event_name != 'merge_group' && hashFiles(format('v-next/{0}/reports/junit.xml', matrix.package)) != '' }}
         uses: codecov/test-results-action@5c441a7bcc06f8706cde90192857d337c5dab8a6 # v1.0.4
         with:
           name: '[${{ matrix.package }}] ci results on ${{ matrix.os }} (Node ${{ matrix.node }})'
