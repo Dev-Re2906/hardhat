@@ -239,6 +239,7 @@ export class EdrProviderWrapper
           },
         },
         networkId: BigInt(config.networkId),
+        observability: {},
         ownedAccounts: config.genesisAccounts.map((account) => {
           return {
             secretKey: account.privateKey,
