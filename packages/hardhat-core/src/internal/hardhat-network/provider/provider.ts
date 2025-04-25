@@ -13,7 +13,7 @@ import type {
   SubscriptionEvent,
   HttpHeader,
   TracingConfigWithBuffers,
-} from "@nomicfoundation/edr";
+} from "@ignored/edr-optimism";
 import picocolors from "picocolors";
 import debug from "debug";
 import { EventEmitter } from "events";
@@ -65,8 +65,8 @@ let _globalEdrContext: EdrContext | undefined;
 export async function getGlobalEdrContext(): Promise<EdrContext> {
   const { EdrContext, GENERIC_CHAIN_TYPE, genericChainProviderFactory } =
     requireNapiRsModule(
-      "@nomicfoundation/edr"
-    ) as typeof import("@nomicfoundation/edr");
+      "@ignored/edr-optimism"
+    ) as typeof import("@ignored/edr-optimism");
 
   if (_globalEdrContext === undefined) {
     // Only one is allowed to exist
@@ -140,8 +140,8 @@ export class EdrProviderWrapper
   ): Promise<EdrProviderWrapper> {
     const { GENERIC_CHAIN_TYPE, l1GenesisState, l1HardforkFromString } =
       requireNapiRsModule(
-        "@nomicfoundation/edr"
-      ) as typeof import("@nomicfoundation/edr");
+        "@ignored/edr-optimism"
+      ) as typeof import("@ignored/edr-optimism");
 
     const coinbase = config.coinbase ?? DEFAULT_COINBASE;
 

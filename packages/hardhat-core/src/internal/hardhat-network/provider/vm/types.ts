@@ -1,4 +1,4 @@
-import type { ExceptionalHalt, SuccessReason } from "@nomicfoundation/edr";
+import type { ExceptionalHalt, SuccessReason } from "@ignored/edr-optimism";
 import type { Address } from "@ethereumjs/util";
 
 /**
