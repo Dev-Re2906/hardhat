@@ -99,7 +99,7 @@
   "dependencies": {
     "@ethereumjs/util": "^9.1.0",
     "@ethersproject/abi": "^5.1.2",
-    "@ignored/edr-optimism": "^0.13.0-alpha.0",
+    "@ignored/edr-optimism": "^0.13.0-alpha.2",
     "@nomicfoundation/solidity-analyzer": "^0.1.0",
     "@sentry/node": "^5.18.1",
     "@types/bn.js": "^5.1.0",

@@ -206,12 +206,15 @@ export class EdrProviderWrapper
         chains: Array.from(config.chains, ([chainId, hardforkConfig]) => {
           return {
             chainId: BigInt(chainId),
+            name: "Unknown",
             hardforks: Array.from(
               hardforkConfig.hardforkHistory,
               ([hardfork, blockNumber]) => {
                 return {
-                  blockNumber: BigInt(blockNumber),
-                  specId: ethereumsjsHardforkToEdrSpecId(
+                  condition: {
+                    blockNumber: BigInt(blockNumber),
+                  },
+                  hardfork: ethereumsjsHardforkToEdrSpecId(
                     getHardforkName(hardfork)
                   ),
                 };
@@ -239,6 +242,7 @@ export class EdrProviderWrapper
           },
         },
         networkId: BigInt(config.networkId),
+        observability: {},
         ownedAccounts: config.genesisAccounts.map((account) => {
           return {
             secretKey: account.privateKey,
