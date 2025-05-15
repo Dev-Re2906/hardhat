@@ -266,7 +266,7 @@ jobs:
       - name: Build
         run: pnpm run --if-present build
       - name: Run tests
-        if: (matrix.os != 'ubuntu-latest' || matrix.node != '22') && github.event_name != 'push' && inputs.coverage != 'true' && !contains(github.event.pull_request.labels.*.name, 'coverage')
+        if: matrix.os != 'ubuntu-latest' || matrix.node != '22' || (github.event_name != 'push' && inputs.coverage != 'true' && !contains(github.event.pull_request.labels.*.name, 'coverage'))
         env:
           __DO_NOT_USE_IS_HARDHAT_CI: true
         run: pnpm run --if-present test
