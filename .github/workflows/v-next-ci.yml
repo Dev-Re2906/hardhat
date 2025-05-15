@@ -133,7 +133,9 @@ jobs:
         run: pnpm build
       - name: Deploy
         run: |
-          pnpm deploy --config.shamefully-hoist=true --config.hoist=true --config.node-linker=true --config.shared-workspace-lockfile=false --filter="$(jq -r .name package.json)" --prod --no-optional bundle
+          pnpm deploy --config.node-linker=hoisted --filter="$(jq -r .name package.json)" --prod bundle.tmp
+          rsync -a --exclude node_modules/.pnpm/ --exclude node_modules/.modules.yaml --copy-links bundle.tmp/ bundle
+          rm -rf **/bundle.tmp
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.package }}
@@ -170,7 +172,7 @@ jobs:
           for bundle in *; do
             echo "# $bundle" | tee -a $GITHUB_OUTPUT
             echo '' | tee -a $GITHUB_OUTPUT
-            echo "Total size of the bundle: "'`'"$(du -sh $bundle --exclude=$bundle/node_modules/.pnpm | cut -f1)"'`' | tee -a $GITHUB_OUTPUT
+            echo "Total size of the bundle: "'`'"$(du -sh $bundle | cut -f1)"'`' | tee -a $GITHUB_OUTPUT
             echo "Total number of dependencies (including transitive): "'`'"$(find $bundle/node_modules/@* $bundle/node_modules -mindepth 1 -maxdepth 1 -type d ! -name '.*' ! -name '@*' | wc -l)"'`' | tee -a $GITHUB_OUTPUT
             echo '' | tee -a $GITHUB_OUTPUT
             echo '<details>' | tee -a $GITHUB_OUTPUT
