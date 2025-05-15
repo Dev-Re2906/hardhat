@@ -264,17 +264,17 @@ jobs:
       - name: Build
         run: pnpm run --if-present build
       - name: Run tests
-        if: github.event_name != 'push' && inputs.coverage != 'true' && !contains(github.event.pull_request.labels.*.name, 'coverage')
+        if: (matrix.os != 'ubuntu-latest' || matrix.node != '22') && github.event_name != 'push' && inputs.coverage != 'true' && !contains(github.event.pull_request.labels.*.name, 'coverage')
         env:
           __DO_NOT_USE_IS_HARDHAT_CI: true
         run: pnpm run --if-present test
       - name: Run tests with coverage
-        if: github.event_name == 'push' || inputs.coverage == 'true' || contains(github.event.pull_request.labels.*.name, 'coverage')
+        if: matrix.os == 'ubuntu-latest' && matrix.node == '22' && (github.event_name == 'push' || inputs.coverage == 'true' || contains(github.event.pull_request.labels.*.name, 'coverage'))
         env:
           __DO_NOT_USE_IS_HARDHAT_CI: true
         run: pnpm run --if-present test:coverage
       - name: Upload coverage
-        if: hashFiles(format('v-next/{0}/coverage/lcov.info', matrix.package)) != '' && matrix.os == 'ubuntu-latest' && matrix.node == 22
+        if: hashFiles(format('v-next/{0}/coverage/lcov.info', matrix.package)) != ''
         uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
         with:
           name: '[${{ matrix.package }}] ci coverage on ${{ matrix.os }} (Node ${{ matrix.node }})'
@@ -289,7 +289,7 @@ jobs:
           OS: ${{ matrix.os }}
           NODE: ${{ matrix.node }}
       - name: Upload test results
-        if: ${{ !cancelled() && hashFiles(format('v-next/{0}/reports/junit.xml', matrix.package)) != '' }}
+        if: ${{ !cancelled() && hashFiles(format('v-next/{0}/coverage/junit.xml', matrix.package)) != '' }}
         uses: codecov/test-results-action@5c441a7bcc06f8706cde90192857d337c5dab8a6 # v1.0.4
         with:
           name: '[${{ matrix.package }}] ci results on ${{ matrix.os }} (Node ${{ matrix.node }})'
