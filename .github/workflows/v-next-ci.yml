@@ -7,6 +7,11 @@ on:
       - v-next
   pull_request:
   workflow_dispatch:
+    inputs:
+      coverage:
+        description: Whether to run coverage
+        required: false
+        default: 'false'
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
@@ -259,9 +264,41 @@ jobs:
       - name: Build
         run: pnpm run --if-present build
       - name: Run tests
+        if: github.event_name != 'push' && inputs.coverage != 'true' && !contains(github.event.pull_request.labels.*.name, 'coverage')
         env:
           __DO_NOT_USE_IS_HARDHAT_CI: true
         run: pnpm run --if-present test
+      - name: Run tests with coverage
+        if: github.event_name == 'push' || inputs.coverage == 'true' || contains(github.event.pull_request.labels.*.name, 'coverage')
+        env:
+          __DO_NOT_USE_IS_HARDHAT_CI: true
+        run: pnpm run --if-present test:coverage
+      - name: Upload coverage
+        if: hashFiles(format('v-next/{0}/coverage/lcov.info', matrix.package)) != ''
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
+        with:
+          name: '[${{ matrix.package }}] ci coverage on ${{ matrix.os }} (Node ${{ matrix.node }})'
+          flags: package-${{ matrix.package }},os-${{ matrix.os }},node-${{ matrix.node }}
+          env_vars: OS,NODE
+          working-directory: v-next/${{ matrix.package }}
+          directory: coverage
+          files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+        env:
+          OS: ${{ matrix.os }}
+          NODE: ${{ matrix.node }}
+      - name: Upload test results
+        if: ${{ !cancelled() && hashFiles(format('v-next/{0}/reports/junit.xml', matrix.package)) != '' }}
+        uses: codecov/test-results-action@5c441a7bcc06f8706cde90192857d337c5dab8a6 # v1.0.4
+        with:
+          name: '[${{ matrix.package }}] ci results on ${{ matrix.os }} (Node ${{ matrix.node }})'
+          flags: package-${{ matrix.package }},os-${{ matrix.os }},node-${{ matrix.node }}
+          working-directory: v-next/${{ matrix.package }}
+          directory: coverage
+          files: junit.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
   ci-aggregate:
     needs: ci
