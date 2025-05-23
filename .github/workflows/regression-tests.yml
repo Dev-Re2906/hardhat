@@ -6,22 +6,27 @@ on:
     inputs:
       hardhat-ref:
         required: true
+        description: 'Hardhat version to test against'
         type: string
         default: 'v-next'
       edr-ref:
         required: false
+        description: 'EDR version to test against'
         type: string
         default: ''
       repositories:
         required: false
+        description: 'Repositories to test against'
         type: string
         default: '["Elytro-eth/soul-wallet-contract", "foundry-rs/forge-std", "kalidao/keep", "mds1/multicall", "pancakeswap/infinity-core", "PaulRBerg/prb-math", "PaulRBerg/prb-proxy", "PaulRBerg/prb-test", "pcaversaccio/createx", "ProjectOpenSea/seaport", "sablier-labs/lockup", "sablier-labs/v2-periphery", "transmissions11/solmate", "Uniswap/UniswapX", "Vectorized/solady"]'
       runners:
         required: false
+        description: 'Runners to test against'
         type: string
         default: '["ubuntu-latest"]'
       commands:
         required: false
+        description: 'Commands to test against'
         type: string
         default: '["hardhat compile", "hardhat test solidity"]'
 
