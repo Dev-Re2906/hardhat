@@ -1,5 +1,12 @@
 # hardhat
 
+## 3.0.0-next.15
+
+### Patch Changes
+
+- 3533685: Add linting to template projects
+- 6be01c4: Support aynsc calls in `getAllFilesMatching` in `hardhat-utils`, thanks @ItsNickBarry ([#6789](https://github.com/NomicFoundation/hardhat/pull/6789))
+
 ## 3.0.0-next.14
 
 ### Patch Changes
