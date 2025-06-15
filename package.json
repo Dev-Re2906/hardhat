@@ -9,7 +9,7 @@
     "@open-rpc/typings": "^1.12.1",
     "hardhat": "workspace:*",
     "prettier": "2.4.1",
-    "shelljs": "^0.8.5",
+    "shelljs": "^0.9.0",
     "typescript": "~5.0.0"
   },
   "scripts": {
